@@ -32,11 +32,18 @@ public sealed class ZipCodesGeoNameRunnerTests : HostedUnitTest
             await using Stream entryStream = entry.Open();
             await using var writer = new StreamWriter(entryStream);
             await writer.WriteLineAsync("US\t99553\tAkutan\tAlaska\tAK\tAleutians East\t013\t\t\t54.143\t-165.7854\t1");
+            await writer.WriteLineAsync("US\t09001\tAPO AA\t\t\t\t\t\t\t38.1105\t15.6613\t");
+            await writer.WriteLineAsync("US\t96365\tAPO STA\t\t\t\t\t\t\t26.3652\t127.7586\t");
+            await writer.WriteLineAsync("US\t00000\tNowhere\t\t\t\t\t\t\t\t\t");
         }
 
         string resultPath = await _fileOperationsUtil.BuildZipCodeGeometryFile(zipFilePath);
-        string result = await File.ReadAllTextAsync(resultPath);
+        string result = (await File.ReadAllTextAsync(resultPath)).Replace("\r\n", "\n");
 
-        await Assert.That(result.Trim()).IsEqualTo("99553\tAkutan\tAK\t54.143\t-165.7854");
+        await Assert.That(result.Trim()).IsEqualTo("""
+                                                   99553	Akutan	AK	54.143	-165.7854
+                                                   09001	APO	AA	38.1105	15.6613
+                                                   96365	APO	AP	26.3652	127.7586
+                                                   """);
     }
 }
