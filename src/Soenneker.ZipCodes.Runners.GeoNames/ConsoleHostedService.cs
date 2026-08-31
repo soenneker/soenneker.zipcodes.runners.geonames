@@ -49,7 +49,11 @@ public sealed class ConsoleHostedService : IHostedService
 
                 try
                 {
-                    string zipFilePath = (await _fileDownloadUtil.Download(Constants.DownloadUri, fileExtension: ".zip", cancellationToken: cancellationToken))!;
+                    string? zipFilePath = await _fileDownloadUtil.Download(Constants.DownloadUri, fileExtension: ".zip", cancellationToken: cancellationToken);
+
+                    if (zipFilePath is null)
+                        throw new InvalidOperationException("The GeoNames ZIP-code export could not be downloaded.");
+
                     string filePath = await _fileOperationsUtil.BuildZipCodeGeometryFile(zipFilePath, cancellationToken);
 
                     await _runnersManager.PushIfChangesNeeded(filePath, Constants.FileName, Constants.Library,

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 namespace Soenneker.ZipCodes.Runners.GeoNames.Utils.Abstract;
 
 /// <summary>
-/// Defines the file operations util contract.
+/// Builds the ZIP-code geometry artifact from a GeoNames export.
 /// </summary>
 public interface IFileOperationsUtil
 {
