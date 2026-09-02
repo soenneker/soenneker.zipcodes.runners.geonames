@@ -1,5 +1,6 @@
 using System.IO;
 using System.IO.Compression;
+using System.Threading;
 using System.Threading.Tasks;
 using Soenneker.Tests.HostedUnit;
 using Soenneker.ZipCodes.Runners.GeoNames.Utils.Abstract;
@@ -17,7 +18,7 @@ public sealed class ZipCodesGeoNameRunnerTests : HostedUnitTest
     }
 
     [Test]
-    public async Task Builds_zip_code_geometry_file()
+    public async Task Builds_zip_code_geometry_file(CancellationToken cancellationToken)
     {
         string zipFilePath = Path.Combine(Path.GetTempPath(), $"{nameof(Builds_zip_code_geometry_file)}.zip");
 
@@ -37,7 +38,7 @@ public sealed class ZipCodesGeoNameRunnerTests : HostedUnitTest
             await writer.WriteLineAsync("US\t00000\tNowhere\t\t\t\t\t\t\t\t\t");
         }
 
-        string resultPath = await _fileOperationsUtil.BuildZipCodeGeometryFile(zipFilePath);
+        string resultPath = await _fileOperationsUtil.BuildZipCodeGeometryFile(zipFilePath, cancellationToken: cancellationToken);
         string result = (await File.ReadAllTextAsync(resultPath)).Replace("\r\n", "\n");
 
         await Assert.That(result.Trim()).IsEqualTo("""
