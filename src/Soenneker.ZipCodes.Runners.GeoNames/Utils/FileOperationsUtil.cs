@@ -11,6 +11,7 @@ using Soenneker.ZipCodes.Runners.GeoNames.Utils.Abstract;
 
 namespace Soenneker.ZipCodes.Runners.GeoNames.Utils;
 
+/// <inheritdoc cref="IFileOperationsUtil" />
 public sealed class FileOperationsUtil : IFileOperationsUtil
 {
     private readonly ILogger<FileOperationsUtil> _logger;
