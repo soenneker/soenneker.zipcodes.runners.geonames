@@ -1,3 +1,4 @@
+using Soenneker.Utils.File.Abstract;
 using System.IO;
 using System.IO.Compression;
 using System.Threading;
@@ -10,10 +11,13 @@ namespace Soenneker.ZipCodes.Runners.GeoNames.Tests;
 [ClassDataSource<Host>(Shared = SharedType.PerTestSession)]
 public sealed class ZipCodesGeoNameRunnerTests : HostedUnitTest
 {
+    private readonly IFileUtil _fileUtil;
+
     private readonly IFileOperationsUtil _fileOperationsUtil;
 
     public ZipCodesGeoNameRunnerTests(Host host) : base(host)
     {
+        _fileUtil = Resolve<IFileUtil>(true);
         _fileOperationsUtil = Resolve<IFileOperationsUtil>(true);
     }
 
@@ -22,10 +26,10 @@ public sealed class ZipCodesGeoNameRunnerTests : HostedUnitTest
     {
         string zipFilePath = Path.Combine(Path.GetTempPath(), $"{nameof(Builds_zip_code_geometry_file)}.zip");
 
-        if (File.Exists(zipFilePath))
-            File.Delete(zipFilePath);
+        if ((await _fileUtil.Exists(zipFilePath)))
+            await _fileUtil.Delete(zipFilePath);
 
-        await using (FileStream zipStream = File.Create(zipFilePath))
+        await using (FileStream zipStream = _fileUtil.OpenWrite(zipFilePath))
         {
             using var archive = new ZipArchive(zipStream, ZipArchiveMode.Create);
             ZipArchiveEntry entry = archive.CreateEntry(Constants.SourceFileName);
@@ -39,7 +43,7 @@ public sealed class ZipCodesGeoNameRunnerTests : HostedUnitTest
         }
 
         string resultPath = await _fileOperationsUtil.BuildZipCodeGeometryFile(zipFilePath, cancellationToken: cancellationToken);
-        string result = (await File.ReadAllTextAsync(resultPath)).Replace("\r\n", "\n");
+        string result = (await _fileUtil.Read(resultPath)).Replace("\r\n", "\n");
 
         await Assert.That(result.Trim()).IsEqualTo("""
                                                    99553	Akutan	AK	54.143	-165.7854

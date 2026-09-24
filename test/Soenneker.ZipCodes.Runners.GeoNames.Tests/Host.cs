@@ -1,3 +1,4 @@
+using Soenneker.Utils.File.Registrars;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +19,7 @@ public sealed class Host : UnitTestHost
 
     private static void SetupIoC(IServiceCollection services)
     {
+        services.AddFileUtilAsSingleton();
         services.AddLogging(builder =>
         {
             builder.AddSerilog(dispose: false);
