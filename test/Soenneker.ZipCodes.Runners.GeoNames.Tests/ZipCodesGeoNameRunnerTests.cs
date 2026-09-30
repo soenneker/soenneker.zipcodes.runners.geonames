@@ -22,7 +22,7 @@ public sealed class ZipCodesGeoNameRunnerTests : HostedUnitTest
     }
 
     [Test]
-    public async Task Builds_zip_code_geometry_file(CancellationToken cancellationToken)
+    public async ValueTask Builds_zip_code_geometry_file(CancellationToken cancellationToken)
     {
         string zipFilePath = Path.Combine(Path.GetTempPath(), $"{nameof(Builds_zip_code_geometry_file)}.zip");
 
