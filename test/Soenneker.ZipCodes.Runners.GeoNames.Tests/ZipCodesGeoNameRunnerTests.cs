@@ -26,8 +26,8 @@ public sealed class ZipCodesGeoNameRunnerTests : HostedUnitTest
     {
         string zipFilePath = Path.Combine(Path.GetTempPath(), $"{nameof(Builds_zip_code_geometry_file)}.zip");
 
-        if ((await _fileUtil.Exists(zipFilePath)))
-            await _fileUtil.Delete(zipFilePath);
+        if ((await _fileUtil.Exists(zipFilePath, cancellationToken: cancellationToken)))
+            await _fileUtil.Delete(zipFilePath, cancellationToken: cancellationToken);
 
         await using (FileStream zipStream = _fileUtil.OpenWrite(zipFilePath))
         {
@@ -43,7 +43,7 @@ public sealed class ZipCodesGeoNameRunnerTests : HostedUnitTest
         }
 
         string resultPath = await _fileOperationsUtil.BuildZipCodeGeometryFile(zipFilePath, cancellationToken: cancellationToken);
-        string result = (await _fileUtil.Read(resultPath)).Replace("\r\n", "\n");
+        string result = (await _fileUtil.Read(resultPath, cancellationToken: cancellationToken)).Replace("\r\n", "\n");
 
         await Assert.That(result.Trim()).IsEqualTo("""
                                                    99553	Akutan	AK	54.143	-165.7854
